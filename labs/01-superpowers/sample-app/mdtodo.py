@@ -18,11 +18,23 @@ def todo_path():
 def read_lines(path):
     if not path.exists():
         return []
-    return path.read_text(encoding="utf-8").splitlines(keepends=True)
+    with path.open(encoding="utf-8", newline="") as file:
+        return file.read().splitlines(keepends=True)
 
 
 def write_lines(path, lines):
-    path.write_text("".join(lines), encoding="utf-8")
+    with path.open("w", encoding="utf-8", newline="") as file:
+        file.write("".join(lines))
+
+
+def trailing_newline(line):
+    if line.endswith("\r\n"):
+        return "\r\n"
+    if line.endswith("\n"):
+        return "\n"
+    if line.endswith("\r"):
+        return "\r"
+    return ""
 
 
 def parse_todo_line(index, line):
@@ -90,8 +102,7 @@ def command_done(raw_number):
 
     todo = incomplete[number - 1]
     original_line = lines[todo.source_index]
-    newline = "\n" if original_line.endswith("\n") else ""
-    lines[todo.source_index] = f"- [x] {todo.text}{newline}"
+    lines[todo.source_index] = f"- [x] {todo.text}{trailing_newline(original_line)}"
     write_lines(path, lines)
     print(f"Done: {todo.text}")
     return 0

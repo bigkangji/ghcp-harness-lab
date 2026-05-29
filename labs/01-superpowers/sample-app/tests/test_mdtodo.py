@@ -105,6 +105,21 @@ class AddAndListTests(CliTestCase):
 
 
 class DoneTests(CliTestCase):
+    def test_done_preserves_crlf_line_endings_when_rewriting_item(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            todo_file = Path(tmp) / "tasks.md"
+            todo_file.write_bytes(b"- [ ] first\r\n- [ ] second\r\n")
+
+            code, stdout, stderr = self.run_cli(["done", "1"], todo_file=todo_file)
+
+            self.assertEqual(code, 0)
+            self.assertEqual(stdout, "Done: first\n")
+            self.assertEqual(stderr, "")
+            self.assertEqual(
+                todo_file.read_bytes(),
+                b"- [x] first\r\n- [ ] second\r\n",
+            )
+
     def test_done_marks_nth_incomplete_item_and_preserves_other_lines(self):
         with tempfile.TemporaryDirectory() as tmp:
             todo_file = Path(tmp) / "tasks.md"
