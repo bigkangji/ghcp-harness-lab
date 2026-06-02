@@ -35,6 +35,7 @@ echo
 echo "== Lab-specific =="
 check node    node    optional
 check npm     npm     optional
+check npx     npx     optional
 check pipx    pipx    optional
 check uv      uv      optional
 check gh      gh      optional
@@ -48,3 +49,4 @@ echo "랩별 실제 요구 도구:"
 echo "  - 01-superpowers : copilot CLI"
 echo "  - 02-gstack      : git + (선택) claude code, bun"
 echo "  - 03-ouroboros   : python3 >= 3.12, pipx 또는 uv, gh, copilot"
+echo "  - 04-mattpocock  : node/npm/npx, copilot"

@@ -26,6 +26,16 @@ copilot                         # 인터랙티브 세션 시작
 copilot --help                  # 옵션 확인
 ```
 
+## skills.sh 설치
+
+Matt Pocock Skills 랩은 `skills` installer를 사용합니다.
+
+```bash
+npx skills@latest add mattpocock/skills
+```
+
+설치 후 GHCP 세션에서 `/setup-matt-pocock-skills`를 실행해 문서 위치와 이슈 트래커 방식을 설정합니다.
+
 ## MCP 서버 확인
 
 GHCP MCP 설정은 보통 `~/.copilot/mcp-config.json`에 위치합니다.

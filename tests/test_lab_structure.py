@@ -37,6 +37,17 @@ LABS = {
         ],
         "readme_must_contain": ["ooo interview", "Seed", "evaluation"],
     },
+    "04-mattpocock-skills": {
+        "tool_name": "Matt Pocock Skills",
+        "install_must_contain": [
+            "npx skills@latest add mattpocock/skills",
+        ],
+        "readme_must_contain": [
+            "/setup-matt-pocock-skills",
+            "/grill-with-docs",
+            "/tdd",
+        ],
+    },
 }
 
 REQUIRED_FILES = [
@@ -64,9 +75,9 @@ class SharedStructureTest(unittest.TestCase):
             with self.subTest(file=rel):
                 self.assertTrue((ROOT / rel).is_file(), f"missing {rel}")
 
-    def test_root_readme_lists_three_labs(self):
+    def test_root_readme_lists_labs(self):
         text = (ROOT / "README.md").read_text(encoding="utf-8")
-        for name in ("Superpowers", "gstack", "Ouroboros"):
+        for name in ("Superpowers", "gstack", "Ouroboros", "Matt Pocock Skills"):
             with self.subTest(name=name):
                 self.assertIn(name, text)
 

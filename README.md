@@ -1,8 +1,8 @@
 # GHCP Skill Labs
 
-GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워크인 **Superpowers**, **gstack**, **Ouroboros**를 실제로 설치하고, 설정하고, 각 프로젝트의 워크플로우로 샘플 앱을 만들어보는 SDLC 실습 랩입니다.
+GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워크인 **Superpowers**, **gstack**, **Ouroboros**, **Matt Pocock Skills**를 실제로 설치하고, 설정하고, 각 프로젝트의 워크플로우로 샘플 앱을 만들어보는 SDLC 실습 랩입니다.
 
-이 저장소의 목적은 세 프로젝트를 단순히 소개하는 것이 아니라, **설치 → GHCP 구성 → 요구사항 정리 → 설계 → 구현 → 검증 → 회고**까지 한 번에 따라 할 수 있는 실습 프로젝트를 제공하는 것입니다.
+이 저장소의 목적은 네 프로젝트를 단순히 소개하는 것이 아니라, **설치 → GHCP 구성 → 요구사항 정리 → 설계 → 구현 → 검증 → 회고**까지 한 번에 따라 할 수 있는 실습 프로젝트를 제공하는 것입니다.
  
 ## 실습 대상
 
@@ -11,16 +11,18 @@ GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워
 | 01 | Superpowers | <https://github.com/obra/superpowers> | TDD, 서브에이전트, 계획 기반 구현을 강제하는 SDLC 스킬 묶음 | 공식 `copilot plugin` marketplace |
 | 02 | gstack | <https://github.com/garrytan/gstack> | CEO, 엔지니어링 매니저, 디자이너, QA, 보안 등 전문가 역할 기반 슬래시 커맨드 | Claude Code 스킬을 GHCP 컨텍스트로 어댑테이션 |
 | 03 | Ouroboros | <https://github.com/Q00/ouroboros> | `ooo interview` → Seed → 실행 → 평가 → evolve의 spec-first Agent OS | `ouroboros setup --runtime copilot` |
+| 04 | Matt Pocock Skills | <https://github.com/mattpocock/skills> | 공유 언어, ADR, TDD, 진단 루프를 작은 스킬로 조합 | `npx skills@latest add mattpocock/skills` |
 
 ## 현재 구성 상태
 
-기존 파일을 모두 삭제하고, 실제 세 프로젝트를 GHCP에서 설치/설정/샘플 앱 빌드까지 따라가는 랩 구조로 다시 구성했습니다.
+기존 파일을 모두 삭제하고, 실제 네 프로젝트를 GHCP에서 설치/설정/샘플 앱 빌드까지 따라가는 랩 구조로 다시 구성했습니다.
 
 ```
 labs/
 ├── 01-superpowers/   # copilot plugin marketplace 기반 설치
 ├── 02-gstack/        # git clone 후 마크다운 스킬을 GHCP 컨텍스트로 어댑테이션
-└── 03-ouroboros/     # ouroboros setup --runtime copilot 기반 공식 GHCP runtime
+├── 03-ouroboros/     # ouroboros setup --runtime copilot 기반 공식 GHCP runtime
+└── 04-mattpocock-skills/ # skills.sh installer 기반 실전 엔지니어링 스킬
 ```
 
 각 랩은 같은 파일 구성을 따릅니다.
@@ -41,15 +43,15 @@ labs/
 Prereq → Install → Configure → Brief → Design → Implement → Verify & Retrospect
 ```
 
-| SDLC 단계 | 목적 | Superpowers | gstack | Ouroboros |
-| --- | --- | --- | --- | --- |
-| Prereq | 로컬 도구 확인 | `copilot`, `git` | `git`, `copilot`, 선택적으로 `bun` | Python 3.12+, `pipx`/`uv`, `gh`, `copilot` |
-| Install | 스킬/런타임 설치 | `copilot plugin install` | `git clone` + 스킬 링크 | `pipx install` + `ouroboros setup` |
-| Configure | 프로젝트 컨텍스트 연결 | `AGENTS.md`, Superpowers 자동 트리거 | `.gstack/skills`, `AGENTS.md` | MCP 등록, Seed/Ledger 워크플로우 |
-| Brief | 만들 앱 정의 | `mdtodo` CLI | 하루 한 줄 회고 웹 | 자연어 우선순위 CLI |
-| Design | 요구사항/설계 추출 | `brainstorming` | `/office-hours`, `/plan-ceo-review`, `/plan-eng-review` | `ooo interview`, Seed |
-| Implement | 계획 기반 구현 | `writing-plans`, `subagent-driven-development`, TDD | `/autoplan` 후 단계별 구현 | `ooo execute --seed <id>` |
-| Verify & Retrospect | 테스트, 리뷰, 다음 반복 | `requesting-code-review`, branch finish | `/review`, `/qa`, `/retro` | `ooo evaluate`, `ooo evolve` |
+| SDLC 단계 | 목적 | Superpowers | gstack | Ouroboros | Matt Pocock Skills |
+| --- | --- | --- | --- | --- | --- |
+| Prereq | 로컬 도구 확인 | `copilot`, `git` | `git`, `copilot`, 선택적으로 `bun` | Python 3.12+, `pipx`/`uv`, `gh`, `copilot` | `node`, `npm`/`npx`, `copilot` |
+| Install | 스킬/런타임 설치 | `copilot plugin install` | `git clone` + 스킬 링크 | `pipx install` + `ouroboros setup` | `npx skills@latest add` |
+| Configure | 프로젝트 컨텍스트 연결 | `AGENTS.md`, Superpowers 자동 트리거 | `.gstack/skills`, `AGENTS.md` | MCP 등록, Seed/Ledger 워크플로우 | `/setup-matt-pocock-skills`, `CONTEXT.md`, ADR |
+| Brief | 만들 앱 정의 | `mdtodo` CLI | 하루 한 줄 회고 웹 | 자연어 우선순위 CLI | 결정 기록 CLI |
+| Design | 요구사항/설계 추출 | `brainstorming` | `/office-hours`, `/plan-ceo-review`, `/plan-eng-review` | `ooo interview`, Seed | `/grill-with-docs` |
+| Implement | 계획 기반 구현 | `writing-plans`, `subagent-driven-development`, TDD | `/autoplan` 후 단계별 구현 | `ooo execute --seed <id>` | `/tdd` |
+| Verify & Retrospect | 테스트, 리뷰, 다음 반복 | `requesting-code-review`, branch finish | `/review`, `/qa`, `/retro` | `ooo evaluate`, `ooo evolve` | `/diagnose`, `/zoom-out` |
 
 ## 빠른 시작
 
@@ -65,6 +67,7 @@ make verify
 open labs/01-superpowers/README.md
 open labs/02-gstack/README.md
 open labs/03-ouroboros/README.md
+open labs/04-mattpocock-skills/README.md
 ```
 
 > **주의**: 각 랩의 `install.sh`는 사용자 환경에 실제 도구를 설치하거나 GHCP 설정을 변경합니다. 먼저 파일 내용을 읽고, 어떤 전역 설정이 바뀌는지 확인한 뒤 실행하세요. 루트의 `make` 타겟은 외부 설치를 자동 실행하지 않습니다.
@@ -155,6 +158,34 @@ cd labs/03-ouroboros/sample-app
 copilot
 ```
 
+## Lab 04: Matt Pocock Skills
+
+Matt Pocock Skills는 `skills.sh` installer로 여러 에이전트에 설치할 수 있는 작은 엔지니어링 스킬 묶음입니다. 원본 README의 quickstart는 다음 흐름입니다.
+
+```bash
+npx skills@latest add mattpocock/skills
+```
+
+설치 시 `/setup-matt-pocock-skills`를 선택하고, 샘플 앱 폴더에서 GHCP 세션을 시작한 뒤 문서 위치와 이슈 트래커 방식을 설정합니다.
+
+샘플 앱은 **결정 기록 CLI (`decide`)** 입니다. `grill-with-docs`가 도메인 언어와 ADR을 정리하고, `tdd`가 add/list/accept 동작을 작은 세로 조각으로 구현합니다.
+
+주요 실습 흐름:
+
+1. `/setup-matt-pocock-skills`: local files, `CONTEXT.md`, `docs/adr/` 설정
+2. `/grill-with-docs`: decision/pending/accepted/rationale 용어 정리
+3. `/tdd`: RED → GREEN → REFACTOR로 CLI 구현
+4. `/diagnose`: 실패 시 재현과 회귀 테스트 중심으로 수정
+5. `/zoom-out`: 코드, 테스트, 문서가 같은 언어를 쓰는지 확인
+
+실행 위치:
+
+```bash
+bash labs/04-mattpocock-skills/install.sh
+cd labs/04-mattpocock-skills/sample-app
+copilot
+```
+
 ## 설치 스크립트가 하는 일
 
 | 스크립트 | 실제 변경 |
@@ -162,6 +193,7 @@ copilot
 | `labs/01-superpowers/install.sh` | GHCP plugin marketplace 등록, Superpowers plugin 설치 |
 | `labs/02-gstack/install.sh` | `~/.gstack`에 gstack 클론, 샘플 앱 `.gstack/skills` 링크 |
 | `labs/03-ouroboros/install.sh` | `ouroboros-ai[mcp]` 설치, GHCP runtime 설정, MCP 등록 확인 |
+| `labs/04-mattpocock-skills/install.sh` | `npx skills@latest add mattpocock/skills` 실행 |
 
 각 스크립트는 외부 도구 설치 또는 사용자 홈 디렉터리 변경을 수행할 수 있으므로, 자동 검증(`make test`, `make verify`)에서는 실행하지 않습니다.
 
@@ -190,13 +222,22 @@ copilot
 │   │   └── sample-app/
 │   │       ├── AGENTS.md
 │   │       └── BRIEF.md
-│   └── 03-ouroboros/
+│   ├── 03-ouroboros/
 │       ├── README.md
 │       ├── install.sh
 │       ├── prompts.md
 │       └── sample-app/
 │           ├── AGENTS.md
 │           └── BRIEF.md
+│   └── 04-mattpocock-skills/
+│       ├── README.md
+│       ├── install.sh
+│       ├── prompts.md
+│       └── sample-app/
+│           ├── AGENTS.md
+│           ├── BRIEF.md
+│           ├── CONTEXT.md
+│           └── docs/adr/
 ├── scripts/
 │   ├── check_prereqs.sh
 │   └── verify_labs.sh
@@ -229,8 +270,9 @@ make prereqs
 | 요구사항이 흐릿하고 먼저 명세를 잠그고 싶다 | Ouroboros `ooo interview` |
 | TDD를 강제하고 작은 태스크로 구현하고 싶다 | Superpowers |
 | 제품 방향을 더 세게 검토하고 출시 전 QA/보안까지 보고 싶다 | gstack |
-| 세 도구를 함께 쓰고 싶다 | Ouroboros로 Seed 생성 → Superpowers로 TDD 구현 → gstack으로 리뷰/QA |
+| 도메인 언어와 ADR을 코드에 맞추고 싶다 | Matt Pocock Skills `/grill-with-docs` |
+| 여러 도구를 함께 쓰고 싶다 | Ouroboros로 Seed 생성 → Matt Pocock으로 문서/용어 정리 → Superpowers 또는 `/tdd`로 구현 → gstack으로 리뷰/QA |
 
 ## 라이선스
 
-이 랩 코드와 문서는 MIT로 사용할 수 있습니다. 외부 프로젝트(Superpowers, gstack, Ouroboros)는 각 프로젝트의 라이선스와 설치 지침을 따릅니다.
+이 랩 코드와 문서는 MIT로 사용할 수 있습니다. 외부 프로젝트(Superpowers, gstack, Ouroboros, Matt Pocock Skills)는 각 프로젝트의 라이선스와 설치 지침을 따릅니다.
