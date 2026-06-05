@@ -4,9 +4,11 @@ This is lab 02 (gstack adaptation). The lab README is at `../README.md`.
 
 ## gstack rules
 
-- Treat `.gstack/skills/<name>/SKILL.md` files as the authoritative spec for
-  each slash command. When I say "act as the CEO/Founder" or "/plan-ceo-review",
-  load the matching SKILL.md first.
+- At session start, read `.gstack/AGENTS.md` as the local gstack skill index and
+  workflow guide.
+- Treat `.gstack/<name>/SKILL.md` files as the authoritative spec for each
+  slash command. When I say "act as the CEO/Founder" or `/plan-ceo-review`, load
+  the matching SKILL.md first without waiting for another prompt.
 - Run gstack roles in this order for this lab:
   /office-hours → /plan-ceo-review → /plan-eng-review → /autoplan
   → implement → /review → /qa → /retro
