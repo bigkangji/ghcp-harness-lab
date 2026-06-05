@@ -1,6 +1,6 @@
 # SDLC Overview
 
-이 랩에서 사용하는 SDLC 7단계 정의입니다. 네 도구는 모두 이 단계를 다른 이름과 다른 강조점으로 다룹니다.
+이 랩에서 사용하는 SDLC 7단계 정의입니다. 각 도구와 패턴은 이 단계를 다른 이름과 다른 강조점으로 다룹니다.
 
 | # | 단계 | 목적 | 검증 가능한 산출물 |
 | --- | --- | --- | --- |
@@ -13,3 +13,7 @@
 | 7 | Verify & Retrospect | 결과 검증, 다음 반복 입력 도출 | `sample-app/RETRO.md` |
 
 각 랩의 README는 위 단계 헤더를 동일하게 사용해 진행 상태를 추적할 수 있도록 합니다.
+
+Lab 05 Agent Hooks는 특히 6-7단계를 강조합니다. `.github/hooks/noteguard-quality.json`에 GitHub Copilot cloud agent hook을 정의하고, `postToolUse`에서 `make lint`, `sessionEnd`에서 `make verify`를 실행하도록 합니다.
+
+Lab 06 Copilot Goals는 5-7단계를 하나의 long-running work contract로 묶습니다. `/goal <objective>`가 `.goal/STATE.md`에 objective, stopping condition, checkpoint, validation 결과를 기록하고, `make verify` 같은 검증 가능한 종료 조건이 통과할 때까지 진행하도록 합니다.

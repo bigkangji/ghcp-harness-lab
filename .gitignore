@@ -1,3 +1,9 @@
 DESIGN.md
 .DS_Store
 .worktrees/
+__pycache__/
+.ruff_cache/
+.vscode/
+.github/prompts/
+labs/01-superpowers/sample-app/tasks.md
+labs/02-gstack/sample-app/.gstack/

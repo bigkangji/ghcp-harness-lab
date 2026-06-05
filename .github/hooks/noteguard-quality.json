@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "mkdir -p logs && echo \"Copilot hook session started: $(date)\" >> logs/copilot-hooks.log",
+        "powershell": "New-Item -ItemType Directory -Force -Path logs | Out-Null; Add-Content -Path logs/copilot-hooks.log -Value \"Copilot hook session started: $(Get-Date)\"",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "if git diff --name-only | grep -E '^labs/05-agent-hooks/sample-app/.*\\.py$' >/dev/null; then make -C labs/05-agent-hooks/sample-app lint; fi",
+        "powershell": "$changed = git diff --name-only | Select-String '^labs/05-agent-hooks/sample-app/.*\\.py$'; if ($changed) { make -C labs/05-agent-hooks/sample-app lint }",
+        "cwd": ".",
+        "timeoutSec": 30
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "make -C labs/05-agent-hooks/sample-app verify",
+        "powershell": "make -C labs/05-agent-hooks/sample-app verify",
+        "cwd": ".",
+        "timeoutSec": 60
+      }
+    ]
+  }
+}

@@ -48,6 +48,32 @@ LABS = {
             "/tdd",
         ],
     },
+    "05-agent-hooks": {
+        "tool_name": "Agent Hooks",
+        "install_must_contain": [
+            ".github/hooks/noteguard-quality.json",
+            "python3 -m json.tool",
+        ],
+        "readme_must_contain": [
+            ".github/hooks/noteguard-quality.json",
+            "sessionEnd",
+            "postToolUse",
+            "make lint",
+            "make verify",
+        ],
+    },
+    "06-copilot-goals": {
+        "tool_name": "Copilot Goals",
+        "install_must_contain": [
+            "chat.promptFiles",
+            ".github/prompts/goal.prompt.md",
+        ],
+        "readme_must_contain": [
+            "/goal",
+            ".goal/STATE.md",
+            "make verify",
+        ],
+    },
 }
 
 REQUIRED_FILES = [
@@ -61,6 +87,7 @@ REQUIRED_FILES = [
 SHARED_DOCS = [
     "README.md",
     "Makefile",
+    ".github/hooks/noteguard-quality.json",
     "docs/sdlc-overview.md",
     "docs/ghcp-cheatsheet.md",
     "docs/comparison.md",
@@ -77,7 +104,7 @@ class SharedStructureTest(unittest.TestCase):
 
     def test_root_readme_lists_labs(self):
         text = (ROOT / "README.md").read_text(encoding="utf-8")
-        for name in ("Superpowers", "gstack", "Ouroboros", "Matt Pocock Skills"):
+        for name in ("Superpowers", "gstack", "Ouroboros", "Matt Pocock Skills", "Agent Hooks", "Copilot Goals"):
             with self.subTest(name=name):
                 self.assertIn(name, text)
 
@@ -86,6 +113,15 @@ class SharedStructureTest(unittest.TestCase):
             path = ROOT / rel
             mode = path.stat().st_mode
             self.assertTrue(mode & stat.S_IXUSR, f"{rel} not executable")
+
+    def test_hook_configs_are_valid_json(self):
+        for path in (ROOT / ".github" / "hooks").glob("*.json"):
+            with self.subTest(file=path.name):
+                import json
+
+                content = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(content.get("version"), 1)
+                self.assertIsInstance(content.get("hooks"), dict)
 
 
 class LabStructureTest(unittest.TestCase):

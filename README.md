@@ -1,8 +1,8 @@
 # GHCP Skill Labs
 
-GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워크인 **Superpowers**, **gstack**, **Ouroboros**, **Matt Pocock Skills**를 실제로 설치하고, 설정하고, 각 프로젝트의 워크플로우로 샘플 앱을 만들어보는 SDLC 실습 랩입니다.
+GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워크인 **Superpowers**, **gstack**, **Ouroboros**, **Matt Pocock Skills**, GitHub Copilot cloud agent의 공식 **Agent Hooks**, prompt file 기반 **Copilot Goals** 패턴을 실제로 설치하고, 설정하고, 각 프로젝트의 워크플로우로 샘플 앱을 만들어보는 SDLC 실습 랩입니다.
 
-이 저장소의 목적은 네 프로젝트를 단순히 소개하는 것이 아니라, **설치 → GHCP 구성 → 요구사항 정리 → 설계 → 구현 → 검증 → 회고**까지 한 번에 따라 할 수 있는 실습 프로젝트를 제공하는 것입니다.
+이 저장소의 목적은 도구를 단순히 소개하는 것이 아니라, **설치 → GHCP 구성 → 요구사항 정리 → 설계 → 구현 → 검증 → 회고**까지 한 번에 따라 할 수 있는 실습 프로젝트를 제공하는 것입니다.
  
 ## 실습 대상
 
@@ -12,17 +12,21 @@ GitHub Copilot CLI(GHCP)에서 유명한 Claude/에이전트 스킬 프레임워
 | 02 | gstack | <https://github.com/garrytan/gstack> | CEO, 엔지니어링 매니저, 디자이너, QA, 보안 등 전문가 역할 기반 슬래시 커맨드 | Claude Code 스킬을 GHCP 컨텍스트로 어댑테이션 |
 | 03 | Ouroboros | <https://github.com/Q00/ouroboros> | `ooo interview` → Seed → 실행 → 평가 → evolve의 spec-first Agent OS | `ouroboros setup --runtime copilot` |
 | 04 | Matt Pocock Skills | <https://github.com/mattpocock/skills> | 공유 언어, ADR, TDD, 진단 루프를 작은 스킬로 조합 | `npx skills@latest add mattpocock/skills` |
+| 05 | Agent Hooks | <https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks> | cloud agent 실행 지점에 lint/test command를 붙이는 공식 hook | `.github/hooks/noteguard-quality.json` |
+| 06 | Copilot Goals | <https://developers.openai.com/codex/use-cases/follow-goals> | durable objective, checkpoint loop, verifiable stopping condition | `.github/prompts/goal.prompt.md` + `.goal/STATE.md` |
 
 ## 현재 구성 상태
 
-기존 파일을 모두 삭제하고, 실제 네 프로젝트를 GHCP에서 설치/설정/샘플 앱 빌드까지 따라가는 랩 구조로 다시 구성했습니다.
+기존 파일을 모두 삭제하고, 실제 도구와 에이전트 워크플로우를 GHCP에서 설치/설정/샘플 앱 빌드까지 따라가는 랩 구조로 다시 구성했습니다.
 
 ```
 labs/
 ├── 01-superpowers/   # copilot plugin marketplace 기반 설치
 ├── 02-gstack/        # git clone 후 마크다운 스킬을 GHCP 컨텍스트로 어댑테이션
 ├── 03-ouroboros/     # ouroboros setup --runtime copilot 기반 공식 GHCP runtime
-└── 04-mattpocock-skills/ # skills.sh installer 기반 실전 엔지니어링 스킬
+├── 04-mattpocock-skills/ # skills.sh installer 기반 실전 엔지니어링 스킬
+├── 05-agent-hooks/   # .github/hooks 기반 cloud agent hook
+└── 06-copilot-goals/ # prompt file 기반 /goal checkpoint loop
 ```
 
 각 랩은 같은 파일 구성을 따릅니다.
@@ -43,15 +47,15 @@ labs/
 Prereq → Install → Configure → Brief → Design → Implement → Verify & Retrospect
 ```
 
-| SDLC 단계 | 목적 | Superpowers | gstack | Ouroboros | Matt Pocock Skills |
-| --- | --- | --- | --- | --- | --- |
-| Prereq | 로컬 도구 확인 | `copilot`, `git` | `git`, `copilot`, 선택적으로 `bun` | Python 3.12+, `pipx`/`uv`, `gh`, `copilot` | `node`, `npm`/`npx`, `copilot` |
-| Install | 스킬/런타임 설치 | `copilot plugin install` | `git clone` + 스킬 링크 | `pipx install` + `ouroboros setup` | `npx skills@latest add` |
-| Configure | 프로젝트 컨텍스트 연결 | `AGENTS.md`, Superpowers 자동 트리거 | `.gstack/skills`, `AGENTS.md` | MCP 등록, Seed/Ledger 워크플로우 | `/setup-matt-pocock-skills`, `CONTEXT.md`, ADR |
-| Brief | 만들 앱 정의 | `mdtodo` CLI | 하루 한 줄 회고 웹 | 자연어 우선순위 CLI | 결정 기록 CLI |
-| Design | 요구사항/설계 추출 | `brainstorming` | `/office-hours`, `/plan-ceo-review`, `/plan-eng-review` | `ooo interview`, Seed | `/grill-with-docs` |
-| Implement | 계획 기반 구현 | `writing-plans`, `subagent-driven-development`, TDD | `/autoplan` 후 단계별 구현 | `ooo execute --seed <id>` | `/tdd` |
-| Verify & Retrospect | 테스트, 리뷰, 다음 반복 | `requesting-code-review`, branch finish | `/review`, `/qa`, `/retro` | `ooo evaluate`, `ooo evolve` | `/diagnose`, `/zoom-out` |
+| SDLC 단계 | 목적 | Superpowers | gstack | Ouroboros | Matt Pocock Skills | Agent Hooks | Copilot Goals |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Prereq | 로컬 도구 확인 | `copilot`, `git` | `git`, `copilot`, 선택적으로 `bun` | Python 3.12+, `pipx`/`uv`, `gh`, `copilot` | `node`, `npm`/`npx`, `copilot` | Python 3.9+, `ruff`, `copilot` | VS Code prompt files, Python 3.9+, `copilot` |
+| Install | 스킬/런타임 설치 | `copilot plugin install` | `git clone` + 스킬 링크 | `pipx install` + `ouroboros setup` | `npx skills@latest add` | `ruff` 확인 | `goal.prompt.md` 복사, `chat.promptFiles` 설정 |
+| Configure | 프로젝트 컨텍스트 연결 | `AGENTS.md`, Superpowers 자동 트리거 | `.gstack/skills`, `AGENTS.md` | MCP 등록, Seed/Ledger 워크플로우 | `/setup-matt-pocock-skills`, `CONTEXT.md`, ADR | `.github/hooks/*.json` | `.github/prompts`, `.goal/STATE.md` |
+| Brief | 만들 앱 정의 | `mdtodo` CLI | 하루 한 줄 회고 웹 | 자연어 우선순위 CLI | 결정 기록 CLI | 노트 CLI | 목표 추적 CLI |
+| Design | 요구사항/설계 추출 | `brainstorming` | `/office-hours`, `/plan-ceo-review`, `/plan-eng-review` | `ooo interview`, Seed | `/grill-with-docs` | 검증 hook 설계 | `/goal` contract 설계 |
+| Implement | 계획 기반 구현 | `writing-plans`, `subagent-driven-development`, TDD | `/autoplan` 후 단계별 구현 | `ooo execute --seed <id>` | `/tdd` | `postToolUse`, `sessionEnd` | checkpoint loop |
+| Verify & Retrospect | 테스트, 리뷰, 다음 반복 | `requesting-code-review`, branch finish | `/review`, `/qa`, `/retro` | `ooo evaluate`, `ooo evolve` | `/diagnose`, `/zoom-out` | `make lint`, `make test`, `make verify` | `/goal status`, `make verify`, progress log |
 
 ## 빠른 시작
 
@@ -68,6 +72,8 @@ open labs/01-superpowers/README.md
 open labs/02-gstack/README.md
 open labs/03-ouroboros/README.md
 open labs/04-mattpocock-skills/README.md
+open labs/05-agent-hooks/README.md
+open labs/06-copilot-goals/README.md
 ```
 
 > **주의**: 각 랩의 `install.sh`는 사용자 환경에 실제 도구를 설치하거나 GHCP 설정을 변경합니다. 먼저 파일 내용을 읽고, 어떤 전역 설정이 바뀌는지 확인한 뒤 실행하세요. 루트의 `make` 타겟은 외부 설치를 자동 실행하지 않습니다.
@@ -186,6 +192,52 @@ cd labs/04-mattpocock-skills/sample-app
 copilot
 ```
 
+## Lab 05: Agent Hooks
+
+Agent Hooks 랩은 GitHub Copilot cloud agent의 공식 `.github/hooks/*.json` 설정을 사용하는 방법을 다룹니다. 목표는 cloud agent 실행 중 `postToolUse`와 `sessionEnd` trigger에서 lint와 test를 자동 실행하게 만드는 것입니다.
+
+샘플 앱은 **노트 보호 CLI (`noteguard`)** 입니다. Python 표준 라이브러리로 구현되어 있고, `ruff`와 `unittest`를 통해 검증합니다.
+
+주요 실습 흐름:
+
+1. `.github/hooks/noteguard-quality.json`의 `version: 1` hook 설정 확인
+2. `sessionStart`, `postToolUse`, `sessionEnd` trigger 역할 이해
+3. `postToolUse`에서 Python 변경 감지 후 `make lint` 실행
+4. `sessionEnd`에서 `make verify` 실행
+5. hook 실패 시 cloud agent 작업 로그에서 실패 명령과 출력 확인
+6. 로컬에서 같은 명령을 수동으로 mirror해 디버깅
+
+실행 위치:
+
+```bash
+bash labs/05-agent-hooks/install.sh
+cd labs/05-agent-hooks/sample-app
+make verify
+```
+
+## Lab 06: Copilot Goals
+
+Copilot Goals 랩은 OpenAI Codex의 `/goal` use case를 GHCP prompt file로 재현합니다. 목표는 Copilot Chat에서 `/goal <objective>`를 입력하면 한 번의 답변으로 끝내지 않고, `.goal/STATE.md`에 objective, stopping condition, checkpoint, verification 결과를 남기며 계속 진행하게 만드는 것입니다.
+
+샘플 앱은 **목표 추적 CLI (`goalkeeper`)** 입니다. 처음에는 요구사항 테스트가 실패하는 골격만 있고, `/goal`이 테스트를 통과할 때까지 구현하도록 설계되어 있습니다.
+
+주요 실습 흐름:
+
+1. `install.sh`로 `sample-app/.github/prompts/goal.prompt.md` 설치
+2. VS Code prompt files 설정 확인
+3. `/goal`로 active goal이 없다는 상태 확인
+4. `/goal Implement the goalkeeper CLI described in BRIEF.md without stopping until make verify passes ...` 실행
+5. `.goal/STATE.md`에 contract와 progress log가 남는지 확인
+6. `/goal`, `/goal pause`, `/goal resume`, `/goal clear`로 상태 제어
+
+실행 위치:
+
+```bash
+bash labs/06-copilot-goals/install.sh
+cd labs/06-copilot-goals/sample-app
+copilot
+```
+
 ## 설치 스크립트가 하는 일
 
 | 스크립트 | 실제 변경 |
@@ -194,56 +246,10 @@ copilot
 | `labs/02-gstack/install.sh` | `~/.gstack`에 gstack 클론, 샘플 앱 `.gstack/skills` 링크 |
 | `labs/03-ouroboros/install.sh` | `ouroboros-ai[mcp]` 설치, GHCP runtime 설정, MCP 등록 확인 |
 | `labs/04-mattpocock-skills/install.sh` | `npx skills@latest add mattpocock/skills` 실행 |
+| `labs/05-agent-hooks/install.sh` | `.github/hooks/noteguard-quality.json` 문법과 `ruff` 실행 가능 여부 확인 |
+| `labs/06-copilot-goals/install.sh` | 샘플 앱에 `.github/prompts/goal.prompt.md` 복사, VS Code prompt files 설정 |
 
 각 스크립트는 외부 도구 설치 또는 사용자 홈 디렉터리 변경을 수행할 수 있으므로, 자동 검증(`make test`, `make verify`)에서는 실행하지 않습니다.
-
-## 디렉토리 구조
-
-```
-.
-├── README.md
-├── Makefile
-├── docs/
-│   ├── comparison.md
-│   ├── ghcp-cheatsheet.md
-│   └── sdlc-overview.md
-├── labs/
-│   ├── 01-superpowers/
-│   │   ├── README.md
-│   │   ├── install.sh
-│   │   ├── prompts.md
-│   │   └── sample-app/
-│   │       ├── AGENTS.md
-│   │       └── BRIEF.md
-│   ├── 02-gstack/
-│   │   ├── README.md
-│   │   ├── install.sh
-│   │   ├── prompts.md
-│   │   └── sample-app/
-│   │       ├── AGENTS.md
-│   │       └── BRIEF.md
-│   ├── 03-ouroboros/
-│       ├── README.md
-│       ├── install.sh
-│       ├── prompts.md
-│       └── sample-app/
-│           ├── AGENTS.md
-│           └── BRIEF.md
-│   └── 04-mattpocock-skills/
-│       ├── README.md
-│       ├── install.sh
-│       ├── prompts.md
-│       └── sample-app/
-│           ├── AGENTS.md
-│           ├── BRIEF.md
-│           ├── CONTEXT.md
-│           └── docs/adr/
-├── scripts/
-│   ├── check_prereqs.sh
-│   └── verify_labs.sh
-└── tests/
-    └── test_lab_structure.py
-```
 
 ## 검증
 
@@ -271,7 +277,9 @@ make prereqs
 | TDD를 강제하고 작은 태스크로 구현하고 싶다 | Superpowers |
 | 제품 방향을 더 세게 검토하고 출시 전 QA/보안까지 보고 싶다 | gstack |
 | 도메인 언어와 ADR을 코드에 맞추고 싶다 | Matt Pocock Skills `/grill-with-docs` |
-| 여러 도구를 함께 쓰고 싶다 | Ouroboros로 Seed 생성 → Matt Pocock으로 문서/용어 정리 → Superpowers 또는 `/tdd`로 구현 → gstack으로 리뷰/QA |
+| cloud agent 실행 중 lint/test를 자동 실행하고 싶다 | Agent Hooks `.github/hooks/*.json` |
+| 한 목표를 여러 checkpoint로 오래 추적하고 싶다 | Copilot Goals `/goal` + `.goal/STATE.md` |
+| 여러 도구를 함께 쓰고 싶다 | Ouroboros로 Seed 생성 → Matt Pocock으로 문서/용어 정리 → Copilot Goals로 긴 구현 추적 → gstack으로 리뷰/QA |
 
 ## 라이선스
 
