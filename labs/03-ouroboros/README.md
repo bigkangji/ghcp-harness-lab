@@ -24,15 +24,16 @@ gh auth status     # 인증되지 않았다면 `gh auth login`
 
 `install.sh`는 다음을 수행합니다.
 
-1. `pipx install 'ouroboros-ai[mcp]'` (`pipx`가 없으면 `uv tool install` 대안 안내)
-2. `ouroboros setup --runtime copilot` — 모델 라이브 디스커버리 후 MCP 서버를 `~/.copilot/mcp-config.json`에 등록
-3. `ouroboros --version` 으로 설치 확인
+1. Python 3.12 실행 파일 확인 (`python3.12`, `python3`, `python`, 또는 `uv python find 3.12`)
+2. `pipx install --python <python3.12> 'ouroboros-ai[mcp]'` (`pipx`가 없으면 `uv tool install --python <python3.12>`)
+3. `ouroboros setup --runtime copilot` — 모델 라이브 디스커버리 후 MCP 서버를 `~/.copilot/mcp-config.json`에 등록
+4. `ouroboros --version` 으로 설치 확인
 
 ```bash
 bash labs/03-ouroboros/install.sh
 ```
 
-> 이 스크립트는 사용자 글로벌 환경에 설치합니다. 실행 전 내용을 확인하세요. Ouroboros는 Python 3.12 이상을 요구합니다.
+> 이 스크립트는 사용자 글로벌 환경에 설치합니다. 실행 전 내용을 확인하세요. Ouroboros는 Python 3.12 이상을 요구하므로, `uv tool install`에도 `--python <python3.12>`를 명시합니다.
 
 ## 3. Configure
 
